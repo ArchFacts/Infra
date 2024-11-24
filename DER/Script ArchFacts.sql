@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `Negocio` (
   `cnpj` CHAR(14) NULL,
   `dataRegistro` DATETIME NOT NULL,
   `avaliacao` INT(1) NULL,
-  `ativado` tinyint(1) NOT NULL,
+  `ativado` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idNegocio`),
   UNIQUE INDEX `codigo_UNIQUE` (`codigo` ASC),
   UNIQUE INDEX `cep_UNIQUE` (`cep` ASC)
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `Usuario` (
   `nome` VARCHAR(125) NOT NULL,
   `email` VARCHAR(125) NOT NULL,
   `senha` VARCHAR(125) NOT NULL,
-  `telefone` CHAR(13) NOT NULL,
+  `telefone` CHAR(12) NOT NULL,
   `dataRegistro` DATETIME NOT NULL,
   `ativado` TINYINT NOT NULL,
   `role` VARCHAR(45) NOT NULL,
@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `Proposta` (
   `idProposta` CHAR(36) NOT NULL,
   `conteudo` VARCHAR(250) NULL,
   `dataEnvio` DATETIME NULL,
+  `servicosEscolhidos` VARCHAR(250) NOT NULL,
   `fkRemetente` CHAR(36) NOT NULL,
   `fkDestinatario` CHAR(36) NOT NULL,
   PRIMARY KEY (`idProposta`),
@@ -95,13 +96,6 @@ CREATE TABLE IF NOT EXISTS `Projeto` (
     ON UPDATE NO ACTION
 ) ENGINE=InnoDB;
 
-ALTER TABLE `Projeto`
-ADD COLUMN `fkBeneficiario` CHAR(36) NOT NULL,
-ADD CONSTRAINT `fk_Projeto_Usuario`
-  FOREIGN KEY (`fkBeneficiario`)
-  REFERENCES `Usuario` (`idUsuario`)
-  ON DELETE NO ACTION
-  ON UPDATE NO ACTION;
 
 -- -----------------------------------------------------
 -- Table `Financeiro`
@@ -130,7 +124,6 @@ DROP TABLE IF EXISTS `Chamado`;
 
 CREATE TABLE IF NOT EXISTS `Chamado` (
   `idChamado` CHAR(36) NOT NULL,
-  `titulo` VARCHAR(45) NOT NULL,
   `descricao` VARCHAR(250) NOT NULL,
   `abertura` DATETIME NOT NULL,
   `fechamento` DATETIME NULL,
@@ -153,7 +146,6 @@ DROP TABLE IF EXISTS `Tarefa`;
 
 CREATE TABLE IF NOT EXISTS `Tarefa` (
   `idTarefa` CHAR(36) NOT NULL,
-  `titulo` VARCHAR(45) NOT NULL,
   `descricao` VARCHAR(250) NULL,
   `despesa` DOUBLE NULL,
   `dataInicio` DATETIME NULL,
@@ -196,11 +188,11 @@ DROP TABLE IF EXISTS `Evento`;
 
 CREATE TABLE IF NOT EXISTS `Evento` (
   `idEvento` CHAR(36) NOT NULL,
-  `dataInicio` DATETIME NULL,
-  `dataTermino` DATETIME NULL,
-  `dataCriacao` DATETIME NULL,
+  `dataInicio` VARCHAR(45) NULL,
+  `dataTermino` VARCHAR(45) NULL,
+  `dataCriacao` VARCHAR(45) NULL,
   `tipo` VARCHAR(45) NULL,
-  `descricao` VARCHAR(150) NULL,
+  `descricao` VARCHAR(45) NULL,
   `status` VARCHAR(45) NULL,
   `fkProjeto` CHAR(36) NOT NULL,
   `fkNegocio` CHAR(36) NOT NULL,
@@ -235,46 +227,37 @@ CREATE TABLE IF NOT EXISTS `Parcela` (
     ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
-drop table if exists `Endereco`;
-
-CREATE TABLE if not exists `Endereco` (
-    id CHAR(36) PRIMARY KEY,
-    cep VARCHAR(9),
-    estado VARCHAR(2),
-    bairro VARCHAR(50),
-    cidade VARCHAR(50),
-    rua VARCHAR(100),
-    numero INT,
-    fkNegocio CHAR(36),
-    CONSTRAINT fk_negocio FOREIGN KEY (fkNegocio) REFERENCES negocio(idNegocio)
-);
-
-INSERT INTO `Negocio` (`idNegocio`, `nome`, `codigo`, `cep`, `cpf`, `cnpj`, `dataRegistro`, `avaliacao`, `ativado`
-) VALUES (
-  'f47ac10b-58cc-4372-a567-0e02b2c3d479',  
-  'Negócio Exemplo',                        
-  'codigo123',                              
-  '12345-678',                              
-  null,                            
-  '12345678000195',                         
-  NOW(),                                   
-  NULL,                                     
-  1                                 
-);
-
-INSERT INTO `Usuario` (`idUsuario`, `nome`, `email`, `senha`, `telefone`, `dataRegistro`, `ativado`, `role`, `fkNegocio`
-) VALUES (
-  'dca3d1f4-81e7-4cf1-a1cb-75f87c2920b6',  
-  'usuario@example.com',                    
-  'usuario@example.com',                    
-  'senhaSegura123',                         
-  '11987654321',                           
-  NOW(),                                   
-  1,                                        
-  'ADM',                                   
-  'f47ac10b-58cc-4372-a567-0e02b2c3d479'   
-);
-
-select * from projeto;
-select * from evento;
+describe Usuario;
 select * from usuario;
+describe negocio;
+
+select * from usuario;
+
+SELECT u.nome, u.email, u.telefone, u.dataRegistro, u.ativado, u.role, n.nome 
+FROM Usuario u 
+LEFT JOIN Negocio n ON u.fkNegocio = n.idNegocio 
+WHERE u.email = '';
+
+insert into Usuario values (
+'e0c1691c-997e-4eca-8168-c73274319af1',
+ 'Júlia Campioto',
+ 'juliacampioto@gmail.com',
+ '$2a$10$AtZPLBMh5Q4DPDsUJRSy9.KPt0gSkgZJtZ.oP2gZ95SOr0nfVZpMO',
+ '11984057602',
+ '2024-11-24 02:53:12',
+ 1,
+ 'USER',
+ null);
+ 
+INSERT INTO Proposta (idProposta, conteudo, dataEnvio, fkRemetente, fkDestinatario)
+VALUES (
+    'a5d16547-ff39-4c77-9d4b-3e8c6fa803d9', -- ID único para a proposta
+    'Proposta para o serviço de consultoria.', -- Conteúdo da proposta
+    NOW(), -- Data de envio (data e hora atual),
+    'Consultoria financeira, Análise de mercado',
+    (SELECT idUsuario FROM Usuario WHERE email = 'juliacampioto@gmail.com'), -- ID do remetente
+    ('07a41013-ac2d-45c4-92db-76935c506756') -- ID do destinatário (negócio)
+);
+
+select * from usuario;
+select * from negocio;
