@@ -55,7 +55,6 @@ CREATE TABLE IF NOT EXISTS `Proposta` (
   `idProposta` CHAR(36) NOT NULL,
   `conteudo` VARCHAR(250) NULL,
   `dataEnvio` DATETIME NULL,
-  `servicosEscolhidos` VARCHAR(250) NOT NULL,
   `fkRemetente` CHAR(36) NOT NULL,
   `fkDestinatario` CHAR(36) NOT NULL,
   PRIMARY KEY (`idProposta`),
@@ -182,6 +181,31 @@ CREATE TABLE IF NOT EXISTS `Servico` (
 ) ENGINE=InnoDB;
 
 -- -----------------------------------------------------
+-- Table Intermediária `PropostaServico`
+-- -----------------------------------------------------
+
+CREATE TABLE PropostaServico (
+    idPropostaServico CHAR(36) PRIMARY KEY, -- Chave primária da tabela intermediária
+    idProposta CHAR(36) NOT NULL,           -- Chave estrangeira para Proposta
+    fkRemetente CHAR(36),                   -- Opcional, vinculado ao remetente da proposta
+    fkDestinatario CHAR(36),                -- Opcional, vinculado ao destinatário da proposta
+    idServico CHAR(36) NOT NULL,            -- Chave estrangeira para Serviço
+    fkNegocio CHAR(36),                     -- Opcional, vinculado ao negócio do serviço
+    dataCriacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Para auditoria
+
+    -- Foreign Keys
+    CONSTRAINT fk_Proposta FOREIGN KEY (idProposta) REFERENCES Proposta(idProposta),
+    CONSTRAINT fk_Servico FOREIGN KEY (idServico) REFERENCES Servico(idServico),
+
+    -- (Opcional) Relacionamentos com Remetente/Destinatário/Negócio, caso necessário
+    CONSTRAINT fk_Remetente FOREIGN KEY (fkRemetente) REFERENCES Usuario(idUsuario),
+    CONSTRAINT fk_Destinatario FOREIGN KEY (fkDestinatario) REFERENCES Usuario(idUsuario),
+    CONSTRAINT fk_Negocio FOREIGN KEY (fkNegocio) REFERENCES Negocio(idNegocio)
+);
+
+
+
+-- -----------------------------------------------------
 -- Table `Evento`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `Evento`;
@@ -254,7 +278,6 @@ VALUES (
     'a5d16547-ff39-4c77-9d4b-3e8c6fa803d9', -- ID único para a proposta
     'Proposta para o serviço de consultoria.', -- Conteúdo da proposta
     NOW(), -- Data de envio (data e hora atual),
-    'Consultoria financeira, Análise de mercado',
     (SELECT idUsuario FROM Usuario WHERE email = 'juliacampioto@gmail.com'), -- ID do remetente
     ('07a41013-ac2d-45c4-92db-76935c506756') -- ID do destinatário (negócio)
 );
