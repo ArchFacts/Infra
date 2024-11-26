@@ -53,8 +53,14 @@ DROP TABLE IF EXISTS `Proposta`;
 
 CREATE TABLE IF NOT EXISTS `Proposta` (
   `idProposta` CHAR(36) NOT NULL,
-  `conteudo` VARCHAR(250) NULL,
+  `titulo` varchar(100) NOT NULL,
+  `cep` char(10) NOT NULL,
+  `dataEntrega` DATETIME NULL,
   `dataEnvio` DATETIME NULL,
+  `endereco` VARCHAR(100) NOT NULL,
+  `numero` INTEGER(10) NOT NULL,
+  `complemento` VARCHAR(100) NULL,
+  `descricao` VARCHAR(250) NULL,
   `fkRemetente` CHAR(36) NOT NULL,
   `fkDestinatario` CHAR(36) NOT NULL,
   PRIMARY KEY (`idProposta`),
