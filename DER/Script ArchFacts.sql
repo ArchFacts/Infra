@@ -191,24 +191,22 @@ CREATE TABLE IF NOT EXISTS `Servico` (
 -- -----------------------------------------------------
 
 CREATE TABLE PropostaServico (
-    idPropostaServico CHAR(36) PRIMARY KEY, -- Chave primária da tabela intermediária
-    idProposta CHAR(36) NOT NULL,           -- Chave estrangeira para Proposta
-    fkRemetente CHAR(36),                   -- Opcional, vinculado ao remetente da proposta
-    fkDestinatario CHAR(36),                -- Opcional, vinculado ao destinatário da proposta
-    idServico CHAR(36) NOT NULL,            -- Chave estrangeira para Serviço
-    fkNegocio CHAR(36),                     -- Opcional, vinculado ao negócio do serviço
-    dataCriacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Para auditoria
+    idPropostaServico CHAR(36) PRIMARY KEY, 
+    idProposta CHAR(36) NOT NULL,           
+    fkRemetente CHAR(36),                   
+    fkDestinatario CHAR(36),                
+    idServico CHAR(36) NOT NULL,            
+    fkNegocio CHAR(36),                     
+    dataCriacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    -- Foreign Keys
-    CONSTRAINT fk_Proposta FOREIGN KEY (idProposta) REFERENCES Proposta(idProposta),
+    --  Keys
+    CONSTRAINT fk_Proposta FOREIGN KEY (idProposta) REFERENCES Proposta(idProposta) ON DELETE CASCADE,
     CONSTRAINT fk_Servico FOREIGN KEY (idServico) REFERENCES Servico(idServico),
 
-    -- (Opcional) Relacionamentos com Remetente/Destinatário/Negócio, caso necessário
     CONSTRAINT fk_Remetente FOREIGN KEY (fkRemetente) REFERENCES Usuario(idUsuario),
-    CONSTRAINT fk_Destinatario FOREIGN KEY (fkDestinatario) REFERENCES Usuario(idUsuario),
+    CONSTRAINT fk_Destinatario FOREIGN KEY (fkDestinatario) REFERENCES Negocio(idNegocio),
     CONSTRAINT fk_Negocio FOREIGN KEY (fkNegocio) REFERENCES Negocio(idNegocio)
 );
-
 
 
 -- -----------------------------------------------------
@@ -290,3 +288,28 @@ VALUES (
 
 select * from usuario;
 select * from negocio;
+select * from proposta;
+select * from servico;
+select * From propostaServico;
+
+SELECT 
+    p.idProposta,
+    p.titulo AS tituloProposta,
+    p.dataEnvio,
+    ps.idServico,
+    s.nome AS nomeServico,
+    s.descricao AS descricaoServico,
+    n.nome AS nomeNegocio
+FROM 
+    Proposta p
+INNER JOIN 
+    PropostaServico ps ON p.idProposta = ps.idProposta
+INNER JOIN 
+    Servico s ON ps.idServico = s.idServico
+INNER JOIN 
+    Negocio n ON p.fkDestinatario = n.idNegocio
+WHERE 
+    n.idNegocio = '68372141-39e3-4ea8-afb0-e2f4ec8aadc7';
+    
+    select * from proposta;
+
