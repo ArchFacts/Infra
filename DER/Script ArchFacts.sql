@@ -92,15 +92,21 @@ CREATE TABLE IF NOT EXISTS `Projeto` (
   `dataEntrega` DATETIME NOT NULL,
   `status` VARCHAR(45) NOT NULL,
   `fkNegocio` CHAR(36) NOT NULL,
+  `fkBeneficiario` CHAR(36) NOT NULL,
   PRIMARY KEY (`idProjeto`, `fkNegocio`),
   INDEX `fk_Projeto_Negocio1_idx` (`fkNegocio` ASC),
+  INDEX `fk_Projeto_Usuario_idx` (`fkBeneficiario` ASC),
   CONSTRAINT `fk_Projeto_Negocio1`
     FOREIGN KEY (`fkNegocio`)
     REFERENCES `Negocio` (`idNegocio`)
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+CONSTRAINT `fk_Projeto_Usuario`
+    FOREIGN KEY (`fkBeneficiario`)
+    REFERENCES `Usuario` (`idUsuario`)
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION
 ) ENGINE=InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `Financeiro`
@@ -129,11 +135,12 @@ DROP TABLE IF EXISTS `Chamado`;
 
 CREATE TABLE IF NOT EXISTS `Chamado` (
   `idChamado` CHAR(36) NOT NULL,
+  `titulo` VARCHAR(45) NOT NULL,
   `descricao` VARCHAR(250) NOT NULL,
   `abertura` DATETIME NOT NULL,
   `fechamento` DATETIME NULL,
   `status` VARCHAR(45) NOT NULL,
-  `lucro` DOUBLE NOT NULL,
+  `lucro` DOUBLE NULL,
   `fkProjeto` CHAR(36) NOT NULL,
   PRIMARY KEY (`idChamado`, `fkProjeto`),
   INDEX `fk_Ticket_Projeto1_idx` (`fkProjeto` ASC),
@@ -143,7 +150,6 @@ CREATE TABLE IF NOT EXISTS `Chamado` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 ) ENGINE=InnoDB;
-
 -- -----------------------------------------------------
 -- Table `Tarefa`
 -- -----------------------------------------------------
@@ -151,6 +157,7 @@ DROP TABLE IF EXISTS `Tarefa`;
 
 CREATE TABLE IF NOT EXISTS `Tarefa` (
   `idTarefa` CHAR(36) NOT NULL,
+  `titulo` VARCHAr(45),
   `descricao` VARCHAR(250) NULL,
   `despesa` DOUBLE NULL,
   `dataInicio` DATETIME NULL,
@@ -311,5 +318,10 @@ INNER JOIN
 WHERE 
     n.idNegocio = '68372141-39e3-4ea8-afb0-e2f4ec8aadc7';
     
+    select * from propostaServico;
     select * from proposta;
-
+    select * From projeto;
+    select * From tarefa;
+    select * from chamado;
+    
+    select * from tarefa join Projeto on idProjeto = fkProjeto where idProjeto = '109feb09-e5be-4d43-9d8b-9e1171a083e8';
