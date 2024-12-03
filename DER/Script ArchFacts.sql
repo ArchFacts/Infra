@@ -2,7 +2,6 @@ DROP DATABASE ArchFacts;
 CREATE DATABASE ArchFacts;
 USE ArchFacts;
 
-
 DROP TABLE IF EXISTS `Negocio`;
 
 CREATE TABLE IF NOT EXISTS `Negocio` (
@@ -118,6 +117,7 @@ CREATE TABLE IF NOT EXISTS `Financeiro` (
   `lucroTotal` DOUBLE NOT NULL,
   `despesaTotal` DOUBLE NOT NULL,
   `Receita` DOUBLE NULL,
+  `dataCriacao` DATETIME NULL,
   `fkProjeto` CHAR(36) NOT NULL,
   PRIMARY KEY (`idFinanceiro`, `fkProjeto`),
   INDEX `fk_Financeiro_Projeto1_idx` (`fkProjeto` ASC),
@@ -319,9 +319,38 @@ WHERE
     n.idNegocio = '68372141-39e3-4ea8-afb0-e2f4ec8aadc7';
     
     select * from propostaServico;
+    select * from servico;
     select * from proposta;
     select * From projeto;
     select * From tarefa;
+    select * from financeiro;
     select * from chamado;
+    select * From negocio;
+    update Chamado set lucro = 1500 where idChamado = 'e88d9bda-91a2-4933-b6cd-a47e88cf5dcf';
+    describe chamado;
+    select * from usuario;
     
-    select * from tarefa join Projeto on idProjeto = fkProjeto where idProjeto = '109feb09-e5be-4d43-9d8b-9e1171a083e8';
+    SELECT ps.servico, u.email FROM PropostaServico ps JOIN ps.proposta p JOIN ps.remetente u WHERE p.idProposta = '51e5a7eb-6a1a-4746-99fa-dea109adafff';
+    
+    
+SELECT 
+    SUM(lucro) AS lucroTotal,
+    SUM(CASE WHEN abertura >= CURRENT_DATE - INTERVAL 7 DAY THEN lucro ELSE 0 END) AS lucroUltimos7Dias,
+    SUM(CASE WHEN abertura >= CURRENT_DATE - INTERVAL 30 DAY THEN lucro ELSE 0 END) AS lucroUltimos30Dias,
+    SUM(CASE WHEN abertura >= CURRENT_DATE - INTERVAL 3 MONTH THEN lucro ELSE 0 END) AS lucroUltimos3Meses
+FROM Chamado c
+JOIN Projeto p ON c.fkProjeto = p.idProjeto
+WHERE p.fkNegocio = `idNegocio`;
+select * from tarefa;
+select * from financeiro;
+UPDATE Financeiro 
+SET 
+    lucroTotal = '500', 
+    despesaTotal = '1010', 
+    Receita = '700', 
+    dataCriacao = '2024-03-20 14:25:30'
+WHERE idFinanceiro = '269f5c68-1c57-420d-863e-98cf6035e891';
+
+delete from tarefa where idTarefa = 'bcaf937b-d75c-458b-a0e6-79befa4f5184';
+
+    
