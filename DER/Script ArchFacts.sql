@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `Servico` (
 -- Table Intermediária `PropostaServico`
 -- -----------------------------------------------------
 
-CREATE TABLE PropostaServico (
+CREATE TABLE `PropostaServico` (
     idPropostaServico CHAR(36) PRIMARY KEY, 
     idProposta CHAR(36) NOT NULL,           
     fkRemetente CHAR(36),                   
@@ -223,12 +223,14 @@ DROP TABLE IF EXISTS `Evento`;
 
 CREATE TABLE IF NOT EXISTS `Evento` (
   `idEvento` CHAR(36) NOT NULL,
+  `idEntidade` CHAR(36) NOT NULL,
   `dataInicio` VARCHAR(45) NULL,
   `dataTermino` VARCHAR(45) NULL,
   `dataCriacao` VARCHAR(45) NULL,
   `tipo` VARCHAR(45) NULL,
   `descricao` VARCHAR(45) NULL,
   `status` VARCHAR(45) NULL,
+  `prioridade` VARCHAR(45) NULL,
   `fkProjeto` CHAR(36) NOT NULL,
   `fkNegocio` CHAR(36) NOT NULL,
   PRIMARY KEY (`idEvento`, `fkProjeto`, `fkNegocio`),
@@ -298,6 +300,7 @@ select * from negocio;
 select * from proposta;
 select * from servico;
 select * From propostaServico;
+select * from projeto;
 
 SELECT 
     p.idProposta,
@@ -353,4 +356,14 @@ WHERE idFinanceiro = '269f5c68-1c57-420d-863e-98cf6035e891';
 
 delete from tarefa where idTarefa = 'bcaf937b-d75c-458b-a0e6-79befa4f5184';
 
+select * from usuario;
+    select * from tarefa;
+    select * from financeiro;
+    drop table financeiro;
+    select * From chamado;
+    select * From tarefa;
+    select * from projeto;
+    select * from parcela;
+    select * from evento;
     
+    drop table evento;
